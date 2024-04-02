@@ -1,0 +1,91 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+
+class Node{
+    public int x,y;
+    Node(int x, int y) {
+        this.x=x;
+        this.y=y;
+    }
+}
+
+public class Main {
+
+    static int[][] graph;
+
+    static int[] dx = {-1,+1,0,0};
+    static int[] dy = {0,0,-1,+1};
+
+    static int N,M,K,cnt=0;
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        M = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
+
+        graph = new int[M][N];
+
+        for(int i=0; i<K; i++) {
+            st = new StringTokenizer(bf.readLine());
+            int dx = Integer.parseInt(st.nextToken());
+            int dy = Integer.parseInt(st.nextToken());
+            int nx = Integer.parseInt(st.nextToken());
+            int ny = Integer.parseInt(st.nextToken());
+            for(int j=dy; j<ny; j++) {
+                for(int k=dx; k<nx; k++) {
+                    graph[j][k]=1;
+                }
+            }
+        }
+
+        ArrayList<Integer> arr = new ArrayList<>();
+
+        for(int i=0; i<M; i++) {
+            for(int j=0; j<N; j++) {
+                if(graph[i][j]==0) {
+                    int sum = bfs(i, j);
+                    arr.add(sum);
+                    cnt++;
+                }
+            }
+        }
+
+        Collections.sort(arr);
+
+        System.out.println(cnt);
+        for (int x : arr) {
+            System.out.print(x+" ");
+        }
+
+    }
+
+    static int bfs(int x, int y) {
+        int result = 1;
+        Queue<Node> Q = new LinkedList<>();
+        Q.offer(new Node(x,y));
+        graph[x][y]=1;
+        while (!Q.isEmpty()) {
+            Node node = Q.poll();
+            for(int i=0; i<4; i++) {
+                int nx = node.x + dx[i];
+                int ny = node.y + dy[i];
+                if(!moveCheck(nx,ny)) continue;
+                if(graph[nx][ny]==1) continue;
+                Q.add(new Node(nx,ny));
+                graph[nx][ny]=1;
+                result++;
+            }
+        }
+        return result;
+    }
+
+    static boolean moveCheck(int nx, int ny) {
+
+        return nx >= 0 && nx < M && ny >= 0 && ny < N;
+    }
+
+}
